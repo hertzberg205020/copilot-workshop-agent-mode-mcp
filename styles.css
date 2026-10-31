@@ -215,9 +215,29 @@ body {
 }
 
 .footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-top: 16px;
   font-size: 0.9rem;
   color: var(--color-text-muted);
+}
+
+.btn-clear {
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  color: var(--color-danger);
+  background: transparent;
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+}
+
+.btn-clear:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* 手機版 */

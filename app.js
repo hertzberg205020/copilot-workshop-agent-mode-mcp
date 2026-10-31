@@ -10,6 +10,7 @@
   var emptyHint = document.getElementById('empty-hint');
   var filterHint = document.getElementById('filter-hint');
   var remainingEl = document.getElementById('remaining-count');
+  var clearDoneBtn = document.getElementById('clear-done');
   var themeBtn = document.getElementById('theme-toggle');
   var filterBtns = document.querySelectorAll('.btn-filter');
   var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -92,6 +93,20 @@
     render();
   }
 
+  // 刪除不可復原,需使用者確認後才執行
+  function clearDone() {
+    var doneCount = todos.filter(function (t) {
+      return t.done;
+    }).length;
+    if (doneCount === 0) return;
+    if (!confirm('確定要清除全部 ' + doneCount + ' 筆已完成的項目嗎?此操作無法復原。')) return;
+    todos = todos.filter(function (t) {
+      return !t.done;
+    });
+    save();
+    render();
+  }
+
   // 重新繪製清單;文字以 textContent 寫入,避免 XSS
   function render() {
     listEl.innerHTML = '';
@@ -138,6 +153,9 @@
     }).length;
     remainingEl.textContent = '未完成:' + remaining + ' 項';
 
+    // 沒有已完成項目時停用按鈕(以全部資料判斷,不受篩選影響)
+    clearDoneBtn.disabled = remaining === todos.length;
+
     // 被篩選隱藏的項目只是不顯示,並未刪除,需明確告知使用者
     const hiddenCount = todos.length - visible.length;
 
@@ -167,6 +185,7 @@
   });
 
   themeBtn.addEventListener('click', toggleTheme);
+  clearDoneBtn.addEventListener('click', clearDone);
 
   // 尚未手動選擇時,系統深淺色變更要即時跟隨
   darkQuery.addEventListener('change', function () {
