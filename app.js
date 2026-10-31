@@ -8,6 +8,7 @@
   var input = document.getElementById('todo-input');
   var listEl = document.getElementById('todo-list');
   var emptyHint = document.getElementById('empty-hint');
+  var filterHint = document.getElementById('filter-hint');
   var remainingEl = document.getElementById('remaining-count');
   var themeBtn = document.getElementById('theme-toggle');
   var filterBtns = document.querySelectorAll('.btn-filter');
@@ -18,8 +19,8 @@
 
   var EMPTY_TEXT = {
     all: '還沒有任何待辦事項,新增一個吧!',
-    active: '沒有未完成的項目',
-    done: '沒有已完成的項目'
+    active: '目前沒有未完成的事項',
+    done: '目前沒有已完成的事項'
   };
 
   // 讀取使用者手動選擇的主題;沒有則回傳 null(跟隨系統)
@@ -137,8 +138,19 @@
     }).length;
     remainingEl.textContent = '未完成:' + remaining + ' 項';
 
-    emptyHint.textContent = todos.length === 0 ? EMPTY_TEXT.all : EMPTY_TEXT[filter];
+    // 被篩選隱藏的項目只是不顯示,並未刪除,需明確告知使用者
+    const hiddenCount = todos.length - visible.length;
+
+    if (todos.length === 0) {
+      emptyHint.textContent = EMPTY_TEXT.all;
+    } else {
+      emptyHint.textContent =
+        EMPTY_TEXT[filter] + '。其他 ' + hiddenCount + ' 筆項目仍保留,切換到「全部」即可查看。';
+    }
     emptyHint.hidden = visible.length > 0;
+
+    filterHint.textContent = '另有 ' + hiddenCount + ' 筆項目被篩選隱藏(並未刪除)';
+    filterHint.hidden = visible.length === 0 || hiddenCount === 0;
 
     filterBtns.forEach(function (btn) {
       var active = btn.getAttribute('data-filter') === filter;

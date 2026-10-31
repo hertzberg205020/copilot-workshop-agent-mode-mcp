@@ -203,6 +203,17 @@ body {
   display: none;
 }
 
+.filter-hint {
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.filter-hint[hidden] {
+  display: none;
+}
+
 .footer {
   margin-top: 16px;
   font-size: 0.9rem;
