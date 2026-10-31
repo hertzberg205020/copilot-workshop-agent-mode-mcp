@@ -2,14 +2,54 @@
   'use strict';
 
   var STORAGE_KEY = 'todo-list-items';
+  var THEME_KEY = 'todo-list-theme';
 
   var form = document.getElementById('todo-form');
   var input = document.getElementById('todo-input');
   var listEl = document.getElementById('todo-list');
   var emptyHint = document.getElementById('empty-hint');
   var remainingEl = document.getElementById('remaining-count');
+  var themeBtn = document.getElementById('theme-toggle');
+  var filterBtns = document.querySelectorAll('.btn-filter');
+  var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
   var todos = load();
+  var filter = 'all'; // all | active | done
+
+  var EMPTY_TEXT = {
+    all: '還沒有任何待辦事項,新增一個吧!',
+    active: '沒有未完成的項目',
+    done: '沒有已完成的項目'
+  };
+
+  // 讀取使用者手動選擇的主題;沒有則回傳 null(跟隨系統)
+  function getSavedTheme() {
+    try {
+      var t = localStorage.getItem(THEME_KEY);
+      return t === 'dark' || t === 'light' ? t : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function currentTheme() {
+    return getSavedTheme() || (darkQuery.matches ? 'dark' : 'light');
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀️ 淺色模式' : '🌙 深色模式';
+  }
+
+  function toggleTheme() {
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch (e) {
+      // 儲存失敗時,本次仍會套用但重新整理後不保留
+    }
+    applyTheme(next);
+  }
 
   // 從 localStorage 讀取資料,格式錯誤時回傳空陣列
   function load() {
@@ -55,7 +95,13 @@
   function render() {
     listEl.innerHTML = '';
 
-    todos.forEach(function (todo) {
+    var visible = todos.filter(function (t) {
+      if (filter === 'active') return !t.done;
+      if (filter === 'done') return t.done;
+      return true;
+    });
+
+    visible.forEach(function (todo) {
       var li = document.createElement('li');
       li.className = 'todo-item' + (todo.done ? ' done' : '');
 
@@ -85,12 +131,35 @@
       listEl.appendChild(li);
     });
 
+    // 未完成數量以全部資料計算,不受篩選影響
     var remaining = todos.filter(function (t) {
       return !t.done;
     }).length;
     remainingEl.textContent = '未完成:' + remaining + ' 項';
-    emptyHint.hidden = todos.length > 0;
+
+    emptyHint.textContent = todos.length === 0 ? EMPTY_TEXT.all : EMPTY_TEXT[filter];
+    emptyHint.hidden = visible.length > 0;
+
+    filterBtns.forEach(function (btn) {
+      var active = btn.getAttribute('data-filter') === filter;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
   }
+
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      filter = btn.getAttribute('data-filter');
+      render();
+    });
+  });
+
+  themeBtn.addEventListener('click', toggleTheme);
+
+  // 尚未手動選擇時,系統深淺色變更要即時跟隨
+  darkQuery.addEventListener('change', function () {
+    if (!getSavedTheme()) applyTheme(currentTheme());
+  });
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -102,5 +171,6 @@
     input.focus();
   });
 
+  applyTheme(currentTheme());
   render();
 })();

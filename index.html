@@ -8,12 +8,21 @@
 </head>
 <body>
   <main class="card">
-    <h1 class="title">待辦清單</h1>
+    <header class="header">
+      <h1 class="title">待辦清單</h1>
+      <button type="button" id="theme-toggle" class="btn btn-theme"></button>
+    </header>
 
     <form id="todo-form" class="todo-form" autocomplete="off">
       <input id="todo-input" class="todo-input" type="text" placeholder="輸入待辦事項…" aria-label="待辦事項">
       <button type="submit" class="btn btn-add">新增</button>
     </form>
+
+    <div class="filters" role="group" aria-label="篩選待辦事項">
+      <button type="button" class="btn btn-filter" data-filter="all">全部</button>
+      <button type="button" class="btn btn-filter" data-filter="active">未完成</button>
+      <button type="button" class="btn btn-filter" data-filter="done">已完成</button>
+    </div>
 
     <ul id="todo-list" class="todo-list"></ul>
     <p id="empty-hint" class="empty-hint" hidden>還沒有任何待辦事項,新增一個吧!</p>

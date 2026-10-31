@@ -8,9 +8,29 @@
   --color-danger: #e5484d;
   --color-danger-bg: #fdecec;
   --color-border: #e3e6ef;
+  --color-input-bg: #ffffff;
+  --color-chip-bg: #eef0f7;
   --shadow-card: 0 8px 24px rgba(45, 49, 66, 0.08);
   --radius-card: 16px;
   --radius-control: 10px;
+  color-scheme: light;
+}
+
+/* 深色模式:只覆寫變數,由 JS 設定 html 的 data-theme */
+:root[data-theme="dark"] {
+  --color-bg: #14161f;
+  --color-card: #1e212d;
+  --color-text: #e6e8f0;
+  --color-text-muted: #8a90a6;
+  --color-primary: #5870f0;
+  --color-primary-hover: #7088ff;
+  --color-danger: #ff6b70;
+  --color-danger-bg: #3a2024;
+  --color-border: #333849;
+  --color-input-bg: #171a24;
+  --color-chip-bg: #2a2e3d;
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
 }
 
 * {
@@ -37,10 +57,29 @@ body {
   box-shadow: var(--shadow-card);
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
 .title {
-  margin: 0 0 20px;
+  margin: 0;
   font-size: 1.5rem;
-  text-align: center;
+}
+
+.btn-theme {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background: var(--color-chip-bg);
+}
+
+.btn-theme:hover {
+  background: var(--color-border);
 }
 
 .todo-form {
@@ -55,6 +94,7 @@ body {
   padding: 10px 14px;
   font-size: 1rem;
   color: inherit;
+  background: var(--color-input-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control);
   outline: none;
@@ -80,6 +120,31 @@ body {
 
 .btn-add:hover {
   background: var(--color-primary-hover);
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.btn-filter {
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background: var(--color-chip-bg);
+}
+
+.btn-filter:hover {
+  background: var(--color-border);
+}
+
+/* 目前選中的篩選 */
+.btn-filter.active,
+.btn-filter.active:hover {
+  color: #fff;
+  background: var(--color-primary);
+  font-weight: 600;
 }
 
 .todo-list {
